@@ -5,6 +5,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// variables about config
 var (
 	// DBcfg maintains several Database config info
 	DBcfg DatabaseConfigModels = make(DatabaseConfigModels)

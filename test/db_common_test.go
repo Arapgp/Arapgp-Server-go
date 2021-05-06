@@ -5,27 +5,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Arapgp/Arapgp-Server-go/config"
 	"github.com/Arapgp/Arapgp-Server-go/tool"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func setupSubtest(t *testing.T) {
-	config.Setup("../arapgp.server.json")
-	log.Info("Setup, Test Begin")
-}
-
-func teardownSubtest(t *testing.T) {
-	config.Teardown()
-	log.Info("Teardown, Test End")
-}
-
 func Test_ConnectDatabase(t *testing.T) {
 	ast := assert.New(t)
-	setupSubtest(t)
-	defer teardownSubtest(t)
+	setupConfig(t)
+	defer teardownConfig(t)
 
 	tcases := []struct {
 		name     string
@@ -53,8 +42,8 @@ func Test_ConnectDatabase(t *testing.T) {
 
 func Test_SelectDatabase(t *testing.T) {
 	ast := assert.New(t)
-	setupSubtest(t)
-	defer teardownSubtest(t)
+	setupConfig(t)
+	defer teardownConfig(t)
 
 	tcases := []struct {
 		name     string

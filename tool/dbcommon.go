@@ -2,19 +2,25 @@ package tool
 
 import (
 	"context"
-	"strconv"
+	"fmt"
+	"time"
 
 	"github.com/Arapgp/Arapgp-Server-go/config"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // GetClient return a MongoDB Client
 func GetClient(ConnName string) *mongo.Client {
 	// compose mongodb uri
 	connCfg := config.DBcfg[ConnName]
-	uri := "mongodb://" + connCfg.Host + ":" + strconv.Itoa(connCfg.Port)
+	uri := fmt.Sprintf(
+		"mongodb://%s:%s@%s:%d/%s",
+		connCfg.Username, connCfg.Password,
+		connCfg.Host, connCfg.Port, connCfg.Database,
+	)
 
 	// init client options & get client
 	clientOpt := options.Client().ApplyURI(uri)
@@ -31,6 +37,12 @@ func GetClient(ConnName string) *mongo.Client {
 		log.WithFields(log.Fields{
 			"opt": clientOpt, "client": client,
 		}).Fatalln("tool.GetClient Connect failed")
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	if err = client.Ping(ctx, readpref.Primary()); err != nil {
+		log.WithFields(log.Fields{
+			"err": err.Error(),
+		}).Fatalln("tool.GetClient Ping failed")
 	}
 	return client
 }

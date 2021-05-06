@@ -23,7 +23,7 @@ func Test_reader(t *testing.T) {
 
 	// m as MapConfig function parameter
 	var m map[string]cfg.Unmarshaler = map[string]cfg.Unmarshaler{
-		"db":     &config.DBcfg,
+		"db":     config.DBcfg,
 		"server": config.Svccfg,
 	}
 
@@ -37,6 +37,6 @@ func Test_reader(t *testing.T) {
 
 	db := config.DBcfg
 	svc := config.Svccfg
-	ast.Equal(svc, &config.ServerConfigModel{Name: "arapgp", Port: 3000})
-	ast.Equal(db, config.DatabaseConfigModels{{Host: "127.0.0.1", Port: 27017, Username: "ljg", Password: "ljg"}})
+	ast.Equal(svc, config.ServerConfigModel{Name: "arapgp", Port: 3000})
+	ast.Equal(db, config.DatabaseConfigModels{"mongo": {Host: "127.0.0.1", Port: 27017, Username: "ljg", Password: "ljg"}})
 }

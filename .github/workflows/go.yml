@@ -10,26 +10,26 @@ jobs:
   test:
     name: Test on ${{ matrix.os }}, with ${{ matrix.go-version }}
     runs-on: ${{ matrix.os }}
-    
+
     strategy:
       matrix:
         go-version: [1.15.x, 1.16.x]
         mongodb-version: [4.0, 4.2, 4.4]
-        os: [ubuntu-latest, macos-latest]
-    
+        os: [ubuntu-latest]
+
     steps:
     - name: Git Checkout code
       uses: actions/checkout@v2
-      
+
     - name: Install Go
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
-      
+
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.3.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
-      
+
     - name: Test code
       run: go test -v -run Test_ ./pkg/test

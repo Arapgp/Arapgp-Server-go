@@ -29,13 +29,20 @@ func MapConfig(cfg gjson.Result, models map[string]Unmarshaler) (err error) {
 func ReadConfigFile(path string) (res gjson.Result, err error) {
 	fd, err := os.Open(path)
 	if err != nil {
-		log.Println("ngoinx.utils.readConfigFile error: os.Open failed:", err.Error())
+		dir, _ := os.Getwd()
+		log.WithFields(log.Fields{
+			"pwd": dir,
+			"err": err.Error(),
+		}).Fatalln("arapgp.pkg.cfg reader.go => ReadConfigFile error: os.Open failed")
 		return gjson.Result{}, err
 	}
 
 	contents, err := ioutil.ReadAll(fd)
 	if err != nil {
-		log.Println("ngoinx.utils.readConfigFile error: ioutil.ReadAll failed:", err.Error())
+		log.WithFields(log.Fields{
+			"contents": contents,
+			"err":      err.Error(),
+		}).Fatalln("arapgp.pkg.cfg reader.go => ReadConfigFile error: ioutil.ReadAll failed")
 		return gjson.Result{}, err
 	}
 

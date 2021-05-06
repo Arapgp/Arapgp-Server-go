@@ -37,6 +37,6 @@ func Test_reader(t *testing.T) {
 
 	db := config.DBcfg
 	svc := config.Svccfg
-	ast.Equal(svc, config.ServerConfigModel{Name: "arapgp", Port: 3000})
+	ast.Equal(svc, &config.ServerConfigModel{Name: "arapgp", Port: 3000})
 	ast.Equal(db, config.DatabaseConfigModels{"mongo": {Host: "127.0.0.1", Port: 27017, Username: "ljg", Password: "ljg"}})
 }

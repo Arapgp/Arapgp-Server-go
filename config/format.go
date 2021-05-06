@@ -18,6 +18,7 @@ type DatabaseConfigModel struct {
 	Port     int
 	Username string
 	Password string
+	Database string
 }
 
 // DatabaseConfigModels is map(string => DatabaseConfigModel)
@@ -35,6 +36,7 @@ func (cfg *DatabaseConfigModel) Unmarshal(res gjson.Result) {
 	cfg.Port = int(res.Get("port").Int())
 	cfg.Username = res.Get("username").String()
 	cfg.Password = res.Get("password").String()
+	cfg.Database = res.Get("database").String()
 }
 
 // Unmarshal is to implement interface "Unmarshaler"

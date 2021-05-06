@@ -12,6 +12,11 @@ func Setup(svcfgPath string) {
 	setupDBSvc(svcfgPath)
 }
 
+// Teardown is a tool function to remove config impact
+func Teardown() {
+	teardownDBSvc()
+}
+
 func setupDBSvc(path string) {
 	// Get gjson.Result from config file
 	res, err := cfg.ReadConfigFile(path)
@@ -30,4 +35,9 @@ func setupDBSvc(path string) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func teardownDBSvc() {
+	DBcfg = make(DatabaseConfigModels)
+	Svccfg = &ServerConfigModel{}
 }

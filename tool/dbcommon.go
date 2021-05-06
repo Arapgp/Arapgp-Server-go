@@ -12,7 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// GetClient return a MongoDB Client
+// GetClient return a MongoDB Client.
+// This function gets client via uri defined in arapgp.server.json,
+// then, tries to connect target database,
+// and ping it to make sure connection built successfully.
 func GetClient(ConnName string) *mongo.Client {
 	// compose mongodb uri
 	connCfg := config.DBcfg[ConnName]
@@ -38,7 +41,8 @@ func GetClient(ConnName string) *mongo.Client {
 			"opt": clientOpt, "client": client,
 		}).Fatalln("tool.GetClient Connect failed")
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		log.WithFields(log.Fields{
 			"err": err.Error(),

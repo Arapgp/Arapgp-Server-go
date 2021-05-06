@@ -36,9 +36,11 @@ type PGPFile struct {
 
 // InsertPGPFiles is to insert multi-files
 func InsertPGPFiles(files []PGPFile) (err error) {
+	// get collection
 	databaseName := config.DBcfg[pgpFileConnName].Database
 	pgpFileCollection := tool.GetClient(pgpFileConnName).Database(databaseName).Collection(pgpFileCollectionName)
 
+	// generate context
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
@@ -48,6 +50,7 @@ func InsertPGPFiles(files []PGPFile) (err error) {
 		document[i] = file
 	}
 
+	// insert documents (converted from input)
 	res, err := pgpFileCollection.InsertMany(ctx, document)
 	if err != nil {
 		errmsg := "arapgp.model.pgpfile => InsertPGPFiles: collection InsertMany failed;"
@@ -59,15 +62,68 @@ func InsertPGPFiles(files []PGPFile) (err error) {
 
 // GetPGPFiles will get Many PGPfiles from mongo.Collection
 func GetPGPFiles(files []PGPFile, filter bson.D) (err error) {
+	// get collection
+	databaseName := config.DBcfg[userConnName].Database
+	pgpFileCollection := tool.GetClient(userConnName).Database(databaseName).Collection(pgpFileCollectionName)
+
+	// generate context
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	// generate cursor
+	cur, err := pgpFileCollection.Find(ctx, filter)
+	if err != nil {
+		errmsg := "arapgp.model.pgpfile => GetPGPFiles: collection Find failed"
+		log.WithFields(log.Fields{"cur": cur, "err": err.Error()}).Warningln(errmsg)
+		return errors.New(errmsg + err.Error())
+	}
+	defer cur.Close(ctx)
+
+	// cursor get all
+	if err = cur.All(ctx, &files); err != nil {
+		errmsg := "arapgp.model.pgpfile => GetPGPFile: cursor.All failed"
+		log.WithFields(log.Fields{"cur": cur, "err": err.Error()}).Warningln(errmsg)
+		return errors.New(errmsg + err.Error())
+	}
 	return
 }
 
 // UpdatePGPFiles will update all PGPFiles that get through filter
 func UpdatePGPFiles(update bson.M, filter bson.D) (err error) {
+	// get collection
+	databaseName := config.DBcfg[userConnName].Database
+	pgpFileCollection := tool.GetClient(userConnName).Database(databaseName).Collection(pgpFileCollectionName)
+
+	// generate context
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	// update documents
+	res, err := pgpFileCollection.UpdateMany(ctx, filter, update)
+	if err != nil {
+		errmsg := "arapgp.model.pgpfile => UpdatePGPFiles: collection UpdateMany failed;"
+		log.WithFields(log.Fields{"res": res, "err": err.Error()}).Warningln(errmsg)
+		return errors.New(errmsg + err.Error())
+	}
 	return
 }
 
 // DeletePGPFiles will delete all PGPFiles that get through filter
 func DeletePGPFiles(filter bson.D) (err error) {
+	// get collection
+	databaseName := config.DBcfg[userConnName].Database
+	pgpFileCollection := tool.GetClient(userConnName).Database(databaseName).Collection(pgpFileCollectionName)
+
+	// generate context
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	// delete documents
+	res, err := pgpFileCollection.DeleteMany(ctx, filter)
+	if err != nil {
+		errmsg := "arapgp.model.pgpfile => DeletePGPFiles: collection DeleteMany failed;"
+		log.WithFields(log.Fields{"res": res, "err": err.Error()}).Warningln(errmsg)
+		return errors.New(errmsg + err.Error())
+	}
 	return
 }

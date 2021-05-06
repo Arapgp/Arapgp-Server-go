@@ -1,11 +1,15 @@
 package main
 
 import (
+	"strconv"
+
+	"github.com/Arapgp/Arapgp-Server-go/config"
 	"github.com/Arapgp/Arapgp-Server-go/route"
-	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+	config.Setup("./arapgp.server.json")
 	router := route.InitRouter()
-	log.Info("route:", router)
+
+	router.Run(":" + strconv.Itoa(config.Svccfg.Port))
 }

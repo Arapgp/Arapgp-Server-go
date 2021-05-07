@@ -3,8 +3,10 @@ package v1
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/Arapgp/Arapgp-Server-go/model"
+	"github.com/Arapgp/Arapgp-Server-go/pkg/shatool"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -13,10 +15,9 @@ import (
 func Register(c *gin.Context) {
 	var json JSONUsernamePassword
 	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad JSON Post!" + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad json post!"})
 		return
 	}
-	log.Println(json)
 
 	// len(Username) must be less than 50
 	if len(json.Username) > 50 || len(json.Username) <= 0 {
@@ -26,15 +27,17 @@ func Register(c *gin.Context) {
 
 	// check whether user exists
 	users := []model.User{}
-	err := model.GetUsers(users, bson.D{{Key: "name", Value: json.Username}})
+	//err := model.GetUsers(users, bson.E{Key: "profile", Value: bson.E{Key: "name", Value: json.Username}})
+	err := model.GetUsers(users, bson.M{"profile.name": json.Username})
 	if len(users) != 0 || err != nil {
 		c.JSON(http.StatusAccepted, gin.H{"error": "Username already exists!"})
 		return
 	}
 
 	// do register(insert) job
+	password := shatool.Sha256String(json.Password)
 	users = []model.User{{
-		Profile: model.UserProfile{Name: json.Username, Password: json.Password},
+		Profile: model.UserProfile{Name: json.Username, Password: password, LastLoginTime: time.Now()},
 		Files:   nil,
 		PubKey:  "",
 	}}
@@ -44,14 +47,51 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"status": "OK"})
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 	return
 }
 
 // Login is a function that process login
 // 1. check username & password
-// 2. return result
+// 2. update last login time of user
+// 3. return result
 func Login(c *gin.Context) {
+	// bind request json
+	var json JSONUsernamePassword
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad json post!"})
+		return
+	}
+
+	// get only 1 user from database via model.GetUsers
+	users := make([]model.User, 1)
+	err := model.GetUsers(users, bson.D{{Key: "profile.name", Value: json.Username}})
+	// can only use `users[0].Profile.Name == ""` to check whether GetUsers failed
+	// how terrible golang and mongo-go-driver are!
+	if err != nil || users[0].Profile.Name == "" {
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": "User not existed!"})
+		return
+	}
+
+	// check username & password
+	if pwd := shatool.Sha256String(json.Password); users[0].Profile.Password != pwd {
+		log.Println(pwd, users[0].Profile.Password)
+		c.JSON(http.StatusAccepted, gin.H{"error": "Username or password wrong!"})
+		return
+	}
+
+	// update last login time
+	err = model.UpdateUsers(
+		bson.M{"$set": bson.M{"profile.lastlogintime": time.Now()}},
+		bson.D{{Key: "profile.name", Value: json.Username}},
+	)
+	if err != nil {
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": "User not existed!"})
+		return
+	}
+
+	// OK, return
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 	return
 }
 

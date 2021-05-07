@@ -20,7 +20,9 @@ const (
 type User struct {
 	Profile UserProfile `bson:"profile"`
 	Files   []PGPFile   `bson:"files"`
-	PubKey  string      `bson:"pubkey"`
+
+	Session string `bson:"session"`
+	PubKey  string `bson:"pubkey"`
 }
 
 // UserProfile is a type used in User

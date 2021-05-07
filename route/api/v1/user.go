@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Arapgp/Arapgp-Server-go/model"
+	"github.com/Arapgp/Arapgp-Server-go/pkg/session"
 	"github.com/Arapgp/Arapgp-Server-go/pkg/shatool"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -80,8 +81,12 @@ func Login(c *gin.Context) {
 	}
 
 	// update last login time
+	newSession := session.GenerateSession(json.Username)
 	err = model.UpdateUsers(
-		bson.M{"$set": bson.M{"profile.lastlogintime": time.Now()}},
+		bson.M{"$set": bson.M{
+			"profile.lastlogintime": time.Now(),
+			"session":               newSession,
+		}},
 		bson.D{{Key: "profile.name", Value: json.Username}},
 	)
 	if err != nil {
@@ -90,7 +95,7 @@ func Login(c *gin.Context) {
 	}
 
 	// OK, return
-	c.JSON(http.StatusOK, gin.H{"status": "OK"})
+	c.JSON(http.StatusOK, gin.H{"status": "OK", "session": newSession})
 	return
 }
 

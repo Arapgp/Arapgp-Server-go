@@ -15,22 +15,21 @@ import (
 func Register(c *gin.Context) {
 	var json JSONUsernamePassword
 	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad json post!"})
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad json post!"})
 		return
 	}
 
 	// len(Username) must be less than 50
 	if len(json.Username) > 50 || len(json.Username) <= 0 {
-		c.JSON(http.StatusAccepted, gin.H{"error": "Username not legal!"})
+		c.JSON(http.StatusOK, gin.H{"status": "Username not legal!"})
 		return
 	}
 
 	// check whether user exists
-	users := []model.User{}
-	//err := model.GetUsers(users, bson.E{Key: "profile", Value: bson.E{Key: "name", Value: json.Username}})
+	users := make([]model.User, 1)
 	err := model.GetUsers(users, bson.M{"profile.name": json.Username})
-	if len(users) != 0 || err != nil {
-		c.JSON(http.StatusAccepted, gin.H{"error": "Username already exists!"})
+	if users[0].Profile.Name == json.Username || err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": "Username already exists!"})
 		return
 	}
 
@@ -43,7 +42,7 @@ func Register(c *gin.Context) {
 	}}
 	err = model.InsertUsers(users)
 	if err != nil {
-		c.JSON(http.StatusAccepted, gin.H{"error": "Unexpected error!"})
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
 		return
 	}
 
@@ -59,7 +58,7 @@ func Login(c *gin.Context) {
 	// bind request json
 	var json JSONUsernamePassword
 	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad json post!"})
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad json post!"})
 		return
 	}
 
@@ -69,14 +68,14 @@ func Login(c *gin.Context) {
 	// can only use `users[0].Profile.Name == ""` to check whether GetUsers failed
 	// how terrible golang and mongo-go-driver are!
 	if err != nil || users[0].Profile.Name == "" {
-		c.JSON(http.StatusNotAcceptable, gin.H{"error": "User not existed!"})
+		c.JSON(http.StatusOK, gin.H{"status": "User not existed!"})
 		return
 	}
 
 	// check username & password
 	if pwd := shatool.Sha256String(json.Password); users[0].Profile.Password != pwd {
 		log.Println(pwd, users[0].Profile.Password)
-		c.JSON(http.StatusAccepted, gin.H{"error": "Username or password wrong!"})
+		c.JSON(http.StatusOK, gin.H{"status": "Username or password wrong!"})
 		return
 	}
 
@@ -86,7 +85,7 @@ func Login(c *gin.Context) {
 		bson.D{{Key: "profile.name", Value: json.Username}},
 	)
 	if err != nil {
-		c.JSON(http.StatusNotAcceptable, gin.H{"error": "User not existed!"})
+		c.JSON(http.StatusOK, gin.H{"status": "User not existed!"})
 		return
 	}
 
@@ -109,4 +108,9 @@ func GetUsersByName(c *gin.Context) {
 type JSONUsernamePassword struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+// JSONStatus is to "Get"
+type JSONStatus struct {
+	Status string `json:"status" binding:"required"`
 }

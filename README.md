@@ -59,9 +59,9 @@ go run arapgp.go
 目前进度：
 
 * [x] `POST /api/v1/signup`
-* [ ] `POST /api/v1/login`
-* [ ] `POST /api/v1/logout`
-* [ ] `GET /api/v1/user`
+* [x] `POST /api/v1/login`
+* [x] `POST /api/v1/logout`
+* [x] `GET /api/v1/user`
 * [ ] `GET /api/v1/pubKey`
 * [ ] `POST /api/v1/pubKey`
 * [ ] `PUT /api/v1/pubKey`

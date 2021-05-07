@@ -16,8 +16,8 @@ func InitRouter() (r *gin.Engine) {
 
 		// About pubKey(REST-ful)
 		apiv1.GET("/pubKey", v1.GetPubKey)
-		apiv1.POST("/pubKey", v1.PostPubKey)
-		apiv1.PUT("/pubKey", v1.UpdatePubKey)
+		apiv1.POST("/pubKey", v1.PostPutPubKey)
+		apiv1.PUT("/pubKey", v1.PostPutPubKey)
 		apiv1.DELETE("/pubKey", v1.DeletePubKey)
 
 		// About User Profile

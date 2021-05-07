@@ -25,7 +25,7 @@ func Auth(inner gin.HandlerFunc) (outer gin.HandlerFunc) {
 				"session": session,
 				"err":     err.Error(),
 			}).Warningln("arapgp.route.wrapper => Auth *gin.Context.Cookie failed.")
-			c.JSON(http.StatusOK, gin.H{"status": "Session does not exist!"})
+			c.JSON(http.StatusOK, gin.H{"status": "Unauthenticated!"})
 			return
 		}
 
@@ -38,7 +38,7 @@ func Auth(inner gin.HandlerFunc) (outer gin.HandlerFunc) {
 				"users": users,
 				"err":   err.Error(),
 			}).Warningln("arapgp.route.wrapper => Auth model.GetUser failed.")
-			c.JSON(http.StatusOK, gin.H{"status": "Session does not exist!"})
+			c.JSON(http.StatusOK, gin.H{"status": "Unauthenticated!"})
 			return
 		}
 

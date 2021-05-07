@@ -18,17 +18,19 @@ const (
 
 // User as a document
 type User struct {
-	Profile UserProfile
-	Files   []PGPFile
-	PubKey  string
+	Profile UserProfile `bson:"profile"`
+	Files   []PGPFile   `bson:"files"`
+	PubKey  string      `bson:"pubkey"`
 }
 
 // UserProfile is a type used in User
 type UserProfile struct {
 	// Name is one of properties to identify users
-	Name string
+	Name string `bson:"name"`
 	// Password need stored after processing
-	Password string
+	Password string `bson:"password"`
+	// LastLoginTime is required in resp of login
+	LastLoginTime time.Time `bson:"lastlogintime"`
 }
 
 // InsertUsers is to insert multi-users
@@ -58,7 +60,7 @@ func InsertUsers(users []User) (err error) {
 }
 
 // GetUsers is a "R"ead Operation
-func GetUsers(users []User, filter bson.D) (err error) {
+func GetUsers(users []User, filter interface{}) (err error) {
 	// get collection
 	databaseName := config.DBcfg[userConnName].Database
 	userCollection := tool.GetClient(userConnName).Database(databaseName).Collection(userCollectionName)
@@ -97,6 +99,7 @@ func UpdateUsers(update bson.M, filter bson.D) (err error) {
 
 	// update documents
 	res, err := userCollection.UpdateMany(ctx, filter, update)
+	log.Println(update)
 	if err != nil {
 		errmsg := "arapgp.model.user => UpdateUsers: collection UpdateMany failed;"
 		log.WithFields(log.Fields{"res": res, "err": err.Error()}).Warningln(errmsg)

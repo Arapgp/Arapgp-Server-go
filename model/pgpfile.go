@@ -20,18 +20,18 @@ const (
 type PGPFile struct {
 	// Name is used to figure out src & dst.
 	// namely, "repeat name" is forbidden
-	Name   string
-	Author string
-	Size   int
+	Name   string `bson:"name"`
+	Author string `bson:"author"`
+	Size   int    `bson:"size"`
 
 	// Create_time represents when file sent to server
-	CreateTime     time.Time
-	LastModifyTime time.Time
+	CreateTime     time.Time `bson:"createtime"`
+	LastModifyTime time.Time `bson:"lastmodifytime"`
 
 	// Path means the place where this "File" stored
 	// and this path is a relative path.
 	// absolute path = path prefix + path (relative path)
-	Path string
+	Path string `bson:"path"`
 }
 
 // InsertPGPFiles is to insert multi-files

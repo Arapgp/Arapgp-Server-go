@@ -54,7 +54,7 @@ func Register(c *gin.Context) {
 // Login is a function that process login
 // 1. check username & password
 // 2. update last login time of user
-// 3. return result
+// 3. return result{ status lastLoginTime session }
 func Login(c *gin.Context) {
 	// bind request json
 	var json JSONUsernamePassword
@@ -72,6 +72,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "User not existed!"})
 		return
 	}
+	lastLoginTime := users[0].Profile.LastLoginTime
 
 	// check username & password
 	if pwd := shatool.Sha256String(json.Password); users[0].Profile.Password != pwd {
@@ -95,7 +96,10 @@ func Login(c *gin.Context) {
 	}
 
 	// OK, return
-	c.JSON(http.StatusOK, gin.H{"status": "OK", "session": newSession})
+	c.JSON(http.StatusOK, gin.H{
+		"status": "OK", "session": newSession,
+		"lastLoginTime": lastLoginTime,
+	})
 	return
 }
 

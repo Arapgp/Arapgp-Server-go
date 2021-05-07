@@ -107,6 +107,37 @@ func Logout(c *gin.Context) {
 
 // GetUsersByName is to "Get UserList" by Name-prefix
 func GetUsersByName(c *gin.Context) {
+	// get params
+	query, ok := c.GetQuery("query")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
+		return
+	}
+
+	// only return 10 users,
+	// and in mongodb-go-driver, "key": /^val/ is forbidden.
+	// because it needn't `""` in mongodb shell, Find will view "/" as normal slash.
+	// use $regex: "^val" instead.
+	users := make([]model.User, 10)
+	err := model.GetUsers(users, bson.M{"profile.name": bson.M{"$regex": "^" + query}})
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
+		return
+	}
+
+	// get userList
+	userList := JSONUserList{}
+	for _, user := range users {
+		if user.Profile.Name == "" {
+			break
+		}
+		userList = append(userList, JSONUser{Username: user.Profile.Name})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   "OK",
+		"userList": userList,
+	})
 	return
 }
 
@@ -119,4 +150,18 @@ type JSONUsernamePassword struct {
 // JSONStatus is to "Get"
 type JSONStatus struct {
 	Status string `json:"status" binding:"required"`
+}
+
+// JSONUser is used when GET /api/v1/user
+type JSONUser struct {
+	Username string
+}
+
+// JSONUserList is used when GET /api/v1/user
+type JSONUserList []JSONUser
+
+// JSONGetUser is used as response when GET /api/v1/user
+type JSONGetUser struct {
+	Status   string       `json:"status" binding:"required"`
+	UserList JSONUserList `json:"userList" binding:"required"`
 }

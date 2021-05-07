@@ -23,7 +23,7 @@ func InitRouter() (r *gin.Engine) {
 		// About User Profile
 		apiv1.POST("/signup", v1.Register)
 		apiv1.POST("/login", v1.Login)
-		apiv1.POST("/logout", v1.Logout)
+		apiv1.POST("/logout", Auth(v1.Logout))
 		apiv1.GET("/user", v1.GetUsersByName)
 
 	}

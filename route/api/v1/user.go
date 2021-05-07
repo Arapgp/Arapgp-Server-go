@@ -101,6 +101,7 @@ func Login(c *gin.Context) {
 
 // Logout is to logout(
 func Logout(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 	return
 }
 

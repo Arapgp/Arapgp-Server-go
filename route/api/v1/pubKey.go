@@ -25,6 +25,7 @@ func GetPubKey(c *gin.Context) {
 
 // PostPutPubKey is to "Post PubKey" by User's uid
 // POST & PUT is the same
+// need session
 func PostPutPubKey(c *gin.Context) {
 	var json JSONPubKey
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -50,6 +51,7 @@ func PostPutPubKey(c *gin.Context) {
 }
 
 // DeletePubKey is to "Delete PubKey" by User's uid
+// need session
 func DeletePubKey(c *gin.Context) {
 	// needn't process error, because auth has done these job
 	session, _ := c.Cookie("SeesionId")

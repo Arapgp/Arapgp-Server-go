@@ -103,13 +103,15 @@ func Login(c *gin.Context) {
 	return
 }
 
-// Logout is to logout(
+// Logout is to logout
+// need session
 func Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 	return
 }
 
 // GetUsersByName is to "Get UserList" by Name-prefix
+// supposed to provide session, but now needn't
 func GetUsersByName(c *gin.Context) {
 	// get params
 	query, ok := c.GetQuery("query")

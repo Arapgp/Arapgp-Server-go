@@ -28,6 +28,7 @@ type DatabaseConfigModels map[string]DatabaseConfigModel
 // ServerConfigModel (Svccfg), model of "server" part in arapgp.server.ini
 type ServerConfigModel struct {
 	Name string
+	Host string
 	Port int
 }
 
@@ -43,6 +44,7 @@ func (cfg *DatabaseConfigModel) Unmarshal(res gjson.Result) {
 // Unmarshal is to implement interface "Unmarshaler"
 func (cfg *ServerConfigModel) Unmarshal(res gjson.Result) {
 	cfg.Name = res.Get("name").String()
+	cfg.Host = res.Get("host").String()
 	cfg.Port = int(res.Get("port").Int())
 }
 

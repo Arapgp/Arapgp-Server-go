@@ -1,0 +1,16 @@
+version: '3'
+services:
+  backend:
+    build: .
+    container_name: 'arapgpserver'
+    ports:
+    - '3000:3000'
+    depends_on:
+    - db
+
+  db:
+    image: mongo
+    container_name: 'arapgpdb'
+    ports:
+    - '27017:27017'
+    restart: always

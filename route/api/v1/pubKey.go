@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// GetPubKey is to "Get PubKey" by User's uid
+// GetPubKey is to "Get PubKey" by User's name
 func GetPubKey(c *gin.Context) {
 	queryName := c.Query("username")
 

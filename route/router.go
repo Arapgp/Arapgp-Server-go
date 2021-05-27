@@ -27,8 +27,8 @@ func InitRouter() (r *gin.Engine) {
 		apiv1.GET("/user", v1.GetUsersByName)
 
 		// About File(s) (REST-ful)
-		apiv1.POST("/user/:username/file", v1.PostPutFileByUserName)
-		apiv1.PUT("/user/:username/file", v1.PostPutFileByUserName)
+		apiv1.POST("/user/:username/file", v1.PostFileByUserName)
+		apiv1.PUT("/user/:username/file", v1.PutFileByUserName)
 		apiv1.GET("/user/:username/file", v1.GetFileByUserName)
 		apiv1.DELETE("/user/:username/file", v1.DeleteFileByUserName)
 		apiv1.GET("/user/:username/filesinfo", v1.GetFilesInfoByUserName)

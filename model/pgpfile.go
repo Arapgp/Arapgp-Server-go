@@ -31,7 +31,8 @@ type PGPFile struct {
 	// Path means the place where this "File" stored
 	// and this path is a relative path.
 	// absolute path = path prefix + path (relative path)
-	Path string `bson:"path"`
+	Path   string `bson:"path"`
+	PubKey string `bson:"pubkey"`
 }
 
 // InsertPGPFiles is to insert multi-files

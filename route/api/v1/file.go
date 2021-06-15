@@ -148,7 +148,33 @@ func PutFileByUserName(c *gin.Context) {
 
 // GetFileByUserName is to "GET PGPFile" by username & file name
 func GetFileByUserName(c *gin.Context) {
+	username := c.Param("username")
+	var json JSONGetFile
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad" + c.Request.Method + "request!"})
+		return
+	}
 
+	// get file
+	files := make([]model.PGPFile, 1)
+	err := model.GetPGPFiles(files, bson.M{"author": username, "name": json.Name})
+	if err != nil || files[0].Name == "" {
+		c.JSON(http.StatusOK, gin.H{"status": "File do not exist!"})
+		return
+	}
+
+	// get file content from real fs
+	content, err := sfs.GetContentByPath(files[0].Path, files[0].Name)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"content": content,
+	})
+	return
 }
 
 // DeleteFileByUserName is to "DELETE PGPFile" by username & file name

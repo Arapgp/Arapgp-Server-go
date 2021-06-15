@@ -38,7 +38,9 @@ func PostPutPubKey(c *gin.Context) {
 
 	// update PubKey
 	err := model.UpdateUsers(
-		bson.M{"pubkey": json.PubKey},
+		bson.M{"$set": bson.M{
+			"pubkey": json.PubKey,
+		}},
 		bson.D{{Key: "session", Value: session}},
 	)
 	if err != nil {
@@ -58,7 +60,9 @@ func DeletePubKey(c *gin.Context) {
 
 	// update PubKey
 	err := model.UpdateUsers(
-		bson.M{"pubkey": ""},
+		bson.M{"$set": bson.M{
+			"pubkey": "",
+		}},
 		bson.D{{Key: "session", Value: session}},
 	)
 	if err != nil {

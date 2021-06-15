@@ -29,4 +29,8 @@ func Test_Sfs(t *testing.T) {
 
 	err = sfs.WriteContentByPath("./sfs_test/", "3.txt", "heheheh")
 	ast.Empty(err)
+
+	content, err = sfs.GetContentByPath("./sfs_test/", "3.txt")
+	ast.Empty(err)
+	ast.NotEmpty(content)
 }

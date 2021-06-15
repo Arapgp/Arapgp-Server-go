@@ -149,7 +149,7 @@ func PutFileByUserName(c *gin.Context) {
 // GetFileByUserName is to "GET PGPFile" by username & file name
 func GetFileByUserName(c *gin.Context) {
 	username := c.Param("username")
-	var json JSONGetFile
+	var json JSONGetDeleteFile
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad" + c.Request.Method + "request!"})
 		return
@@ -179,7 +179,43 @@ func GetFileByUserName(c *gin.Context) {
 
 // DeleteFileByUserName is to "DELETE PGPFile" by username & file name
 func DeleteFileByUserName(c *gin.Context) {
+	username := c.Param("username")
+	var json JSONGetDeleteFile
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad" + c.Request.Method + "request!"})
+		return
+	}
 
+	// delete from pgpfile collection
+	err := model.DeletePGPFiles(bson.M{"author": username, "name": json.Name})
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": "File do not exist!"})
+		return
+	}
+
+	// remove one element in array(user.files)
+	// whose name is json.Name
+	err = model.UpdateUsers(
+		bson.M{},
+		bson.M{"$pull": bson.M{
+			"files": bson.M{"name": json.Name},
+		}},
+	)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
+		return
+	}
+
+	// delete file in real fs
+	err = sfs.DeleteFileByPath(config.Svccfg.File+username+"/", json.Name)
+	if err != nil {
+		// error occur when deleting file in fs
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
+	return
 }
 
 // GetFilesInfoByUserName is to "GET PGPFiles' info" by username
@@ -211,6 +247,6 @@ type JSONPostPutFile struct {
 }
 
 // JSONGetFile is a json for Get File
-type JSONGetFile struct {
+type JSONGetDeleteFile struct {
 	Name string `json:"name" binding:"required"`
 }

@@ -92,7 +92,7 @@ func GetPGPFiles(files []PGPFile, filter interface{}) (err error) {
 }
 
 // UpdatePGPFiles will update all PGPFiles that get through filter
-func UpdatePGPFiles(update bson.M, filter bson.D) (err error) {
+func UpdatePGPFiles(update bson.M, filter bson.M) (err error) {
 	// get collection
 	databaseName := config.DBcfg[userConnName].Database
 	pgpFileCollection := tool.GetClient(userConnName).Database(databaseName).Collection(pgpFileCollectionName)

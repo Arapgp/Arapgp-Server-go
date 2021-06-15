@@ -41,7 +41,7 @@ func PostPutPubKey(c *gin.Context) {
 		bson.M{"$set": bson.M{
 			"pubkey": json.PubKey,
 		}},
-		bson.D{{Key: "session", Value: session}},
+		bson.M{"session": session},
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
@@ -63,7 +63,7 @@ func DeletePubKey(c *gin.Context) {
 		bson.M{"$set": bson.M{
 			"pubkey": "",
 		}},
-		bson.D{{Key: "session", Value: session}},
+		bson.M{"session": session},
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})

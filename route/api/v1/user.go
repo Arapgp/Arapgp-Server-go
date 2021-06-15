@@ -88,7 +88,7 @@ func Login(c *gin.Context) {
 			"profile.lastlogintime": time.Now(),
 			"session":               newSession,
 		}},
-		bson.D{{Key: "profile.name", Value: json.Username}},
+		bson.M{"profile.name": json.Username},
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "User not existed!"})

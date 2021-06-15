@@ -106,6 +106,17 @@ func Login(c *gin.Context) {
 // Logout is to logout
 // need session
 func Logout(c *gin.Context) {
+	// get session, Auth already, no error
+	session, _ := c.Cookie("SessionId")
+	err := model.UpdateUsers(
+		bson.M{"$set": bson.M{"session": ""}},
+		bson.M{"session": session},
+	)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 	return
 }

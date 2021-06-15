@@ -112,7 +112,7 @@ func UpdatePGPFiles(update bson.M, filter bson.M) (err error) {
 }
 
 // DeletePGPFiles will delete all PGPFiles that get through filter
-func DeletePGPFiles(filter bson.D) (err error) {
+func DeletePGPFiles(filter bson.M) (err error) {
 	// get collection
 	databaseName := config.DBcfg[userConnName].Database
 	pgpFileCollection := tool.GetClient(userConnName).Database(databaseName).Collection(pgpFileCollectionName)

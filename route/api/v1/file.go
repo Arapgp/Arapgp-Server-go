@@ -54,7 +54,7 @@ func PostFileByUserName(c *gin.Context) {
 		{
 			Name: json.Name, Author: username, Size: len(json.Content),
 			CreateTime: time.Now(), LastModifyTime: time.Now(),
-			Path: "/" + username + "/" + json.Name, PubKey: json.PubKey,
+			Path: username + "/", PubKey: json.PubKey,
 		},
 	}
 	err = model.InsertPGPFiles(files)
@@ -135,7 +135,7 @@ func PutFileByUserName(c *gin.Context) {
 		bson.M{"$set": bson.M{
 			"files.$.lastmodifytime": time.Now(),
 		}},
-		bson.M{"profile.name": username},
+		bson.M{"profile.name": username, "files.name": json.Name},
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
@@ -148,23 +148,19 @@ func PutFileByUserName(c *gin.Context) {
 
 // GetFileByUserName is to "GET PGPFile" by username & file name
 func GetFileByUserName(c *gin.Context) {
-	username := c.Param("username")
-	var json JSONGetDeleteFile
-	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad" + c.Request.Method + "request!"})
-		return
-	}
+	username, name := c.Param("username"), c.Query("name")
 
 	// get file
 	files := make([]model.PGPFile, 1)
-	err := model.GetPGPFiles(files, bson.M{"author": username, "name": json.Name})
+	err := model.GetPGPFiles(files, bson.M{"author": username, "name": name})
 	if err != nil || files[0].Name == "" {
 		c.JSON(http.StatusOK, gin.H{"status": "File do not exist!"})
 		return
 	}
 
 	// get file content from real fs
-	content, err := sfs.GetContentByPath(files[0].Path, files[0].Name)
+	// files.$.Path store the real relative "Path" about the target file in real fs
+	content, err := sfs.GetContentByPath(config.Svccfg.File+files[0].Path, files[0].Name)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
 		return
@@ -180,7 +176,7 @@ func GetFileByUserName(c *gin.Context) {
 // DeleteFileByUserName is to "DELETE PGPFile" by username & file name
 func DeleteFileByUserName(c *gin.Context) {
 	username := c.Param("username")
-	var json JSONGetDeleteFile
+	var json JSONDeleteFile
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad" + c.Request.Method + "request!"})
 		return
@@ -196,10 +192,10 @@ func DeleteFileByUserName(c *gin.Context) {
 	// remove one element in array(user.files)
 	// whose name is json.Name
 	err = model.UpdateUsers(
-		bson.M{},
 		bson.M{"$pull": bson.M{
 			"files": bson.M{"name": json.Name},
 		}},
+		bson.M{},
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
@@ -246,7 +242,7 @@ type JSONPostPutFile struct {
 	PubKey  string `json:"pubKey" binding:"required"`
 }
 
-// JSONGetFile is a json for Get File
-type JSONGetDeleteFile struct {
+// JSONDeleteFile is a json for Get File
+type JSONDeleteFile struct {
 	Name string `json:"name" binding:"required"`
 }

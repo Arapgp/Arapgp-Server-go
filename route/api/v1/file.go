@@ -34,7 +34,13 @@ func PostFileByUserName(c *gin.Context) {
 
 	// check whether file already exists
 	checkFiles := make([]model.PGPFile, 1)
-	err = model.GetPGPFiles(checkFiles, bson.D{{Key: "user", Value: "?"}})
+	err = model.GetPGPFiles(checkFiles, bson.M{"name": json.Name, "author": username})
+	if err != nil || checkFiles[0].Name != "" {
+		c.JSON(http.StatusOK, gin.H{"status": "File already exists!"})
+		return
+	}
+
+	// a new file
 	files := []model.PGPFile{
 		{
 			Name: json.Name, Author: username, Size: len(json.Content),

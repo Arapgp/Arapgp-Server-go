@@ -64,7 +64,7 @@ func InsertPGPFiles(files []PGPFile) (err error) {
 }
 
 // GetPGPFiles will get Many PGPfiles from mongo.Collection
-func GetPGPFiles(files []PGPFile, filter bson.D) (err error) {
+func GetPGPFiles(files []PGPFile, filter interface{}) (err error) {
 	// get collection
 	databaseName := config.DBcfg[userConnName].Database
 	pgpFileCollection := tool.GetClient(userConnName).Database(databaseName).Collection(pgpFileCollectionName)

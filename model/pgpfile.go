@@ -35,7 +35,8 @@ type PGPFile struct {
 	PubKey string `bson:"pubkey"`
 }
 
-// InsertPGPFiles is to insert multi-files
+// InsertPGPFiles is to insert multi-files.
+// input parameter(files) need init all properties
 func InsertPGPFiles(files []PGPFile) (err error) {
 	// get collection
 	databaseName := config.DBcfg[pgpFileConnName].Database
@@ -51,7 +52,8 @@ func InsertPGPFiles(files []PGPFile) (err error) {
 		document[i] = file
 	}
 
-	// insert documents (converted from input)
+	// insert documents to pgpfile collection (converted from input)
+	// need insert documents to user.files in route.api
 	res, err := pgpFileCollection.InsertMany(ctx, document)
 	if err != nil {
 		errmsg := "arapgp.model.pgpfile => InsertPGPFiles: collection InsertMany failed;"

@@ -38,7 +38,7 @@ func Register(c *gin.Context) {
 	password := shatool.Sha256String(json.Password)
 	users = []model.User{{
 		Profile: model.UserProfile{Name: json.Username, Password: password, LastLoginTime: time.Now()},
-		Files:   nil,
+		Files:   []model.PGPFile{},
 		PubKey:  "",
 	}}
 	err = model.InsertUsers(users)

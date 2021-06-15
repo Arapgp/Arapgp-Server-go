@@ -6,7 +6,7 @@
   "server": {
     "host": "127.0.0.1",
     "name": "arapgp",
-    "file": "./archive",
+    "file": "./archive/",
     "port": 3000
   }
 }

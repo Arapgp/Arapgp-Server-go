@@ -1,12 +1,61 @@
 # :broken_heart: Arapgp-Server-go
 
-由于 `TypeScript` 我不会配环境，为了前端开发的顺利进行，临时搓了个 `golang` 的后端，以供前端开发时测试验证。
-
-（与 `TypeScript` 同步开发中）
+原后端仓库已 `private archive`。
 
 ## :heart: 使用
 
-### 1. 安装 go
+### 1. 使用 docker
+
+#### i. 安装 docker 与 docker-compose
+
+关于 `docker`：
+
+* [For CentOS](https://docs.docker.com/engine/install/centos/)
+* [For Debian](https://docs.docker.com/engine/install/debian/)
+
+```bash
+# to check docker
+docker version
+```
+
+关于 `docker-compose`：
+
+[Read this doc to install docker-compose](https://docs.docker.com/compose/install/)
+
+```bash
+# to check docker-compose
+sudo docker-compose --version
+```
+
+#### ii. 修改配置文件 `arapgp.server.json`
+
+在默认的 `arapgp.server.json` 中，`db.mongo.host` 为 `127.0.0.1`，为方便本地调试而设置。这里应该改成数据库所在的 `host`；`port` 等字段同理。
+
+```json
+{
+  // some other options...
+
+  "db": {
+    "mongo": { "host": "127.0.0.1", "port": 27017, "username": "ljg", "password": "ljg", "database": "ljgtest" }
+  }
+
+  // some other options...
+}
+```
+
+#### iii. 直接执行
+
+由于本仓库使用 `go` 作为主要语言，在 `build` / `up` 的过程中，指令 `go build` 可能由于 `go get xxxx` 耗费时间过长而被迫中断。这个时候需要想想办法。
+
+```bash
+# at repo root to build
+docker-compose build
+docker-compose up -d
+```
+
+### 2. 直接 go run
+
+#### i. 安装 go
 
 [Read these doc to install go](https://golang.org/doc/install)
 
@@ -15,7 +64,7 @@
 go version
 ```
 
-### 2. 安装 MongoDB
+#### ii. 安装 MongoDB
 
 [Read these doc to install MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
 
@@ -40,10 +89,10 @@ cd <MongoDB-Path>
 > use ljgtest
 
 # create a new user
-> db.createUser({user: "ljg", pwd: "ljg", roles: [{role: "readWrite", "db": "ljgtest"}]})
+> db.createUser({user: "ljg", pwd: "ljg", roles: [{role: "userAdminAnyDatabase", "db": "admin"}]})
 ```
 
-### 3. clone this repo && run it
+#### iii. clone this repo && run it
 
 ```bash
 # clone this repo
@@ -70,3 +119,4 @@ go run arapgp.go
 * [x] `POST     /api/v1/user/:username/file`
 * [x] `PUT      /api/v1/user/:username/file`
 * [x] `DELETE   /api/v1/user/:username/file`
+* [ ] `GET      /api/v1/ping`

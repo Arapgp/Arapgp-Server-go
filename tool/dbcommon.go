@@ -19,10 +19,11 @@ import (
 func GetClient(ConnName string) *mongo.Client {
 	// compose mongodb uri
 	connCfg := config.DBcfg[ConnName]
+	// sorry. I use root user to curd database, forgive me!
 	uri := fmt.Sprintf(
-		"mongodb://%s:%s@%s:%d/%s",
+		"mongodb://%s:%s@%s:%d",
 		connCfg.Username, connCfg.Password,
-		connCfg.Host, connCfg.Port, connCfg.Database,
+		connCfg.Host, connCfg.Port,
 	)
 
 	// init client options & get client
@@ -45,7 +46,7 @@ func GetClient(ConnName string) *mongo.Client {
 	defer cancel()
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		log.WithFields(log.Fields{
-			"err": err.Error(),
+			"err": err.Error(), "uri": uri,
 		}).Fatalln("tool.GetClient Ping failed")
 	}
 	return client

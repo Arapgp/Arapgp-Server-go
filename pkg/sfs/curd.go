@@ -39,7 +39,7 @@ func WriteContentByPath(path, name, content string) (err error) {
 	// if-else generate/write file
 	if !checkFileExistence(path, name) {
 		// create folder
-		err = os.MkdirAll(path, 0666)
+		err = os.MkdirAll(path, 0777)
 		if err != nil {
 			errmsg := "arapgp.pkg.sfs.GetContentByPath => MkdirAll: create folder recursively failed;"
 			log.WithFields(log.Fields{"path": path, "name": name, "err": err.Error()}).Warningln("Open File failed!")

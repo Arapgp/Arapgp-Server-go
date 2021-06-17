@@ -13,8 +13,7 @@ services:
     container_name: 'arapgpdb'
     ports:
     - '27017:27017'
-    environment:
-      MONGO_INITDB_DATABASE: 'ljgtest'
-      MONGO_INITDB_ROOT_USERNAME: 'ljg'
-      MONGO_INITDB_ROOT_PASSWORD: 'ljg'
+    volumes:
+    - .:/script/setup
+    command: --auth
     restart: always

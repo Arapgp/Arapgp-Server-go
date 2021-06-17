@@ -39,7 +39,7 @@ func WriteContentByPath(path, name, content string) (err error) {
 	// if-else generate/write file
 	if !checkFileExistence(path, name) {
 		// create folder
-		err = os.MkdirAll(path, os.FileMode(os.O_RDWR))
+		err = os.MkdirAll(path, 0777)
 		if err != nil {
 			errmsg := "arapgp.pkg.sfs.GetContentByPath => MkdirAll: create folder recursively failed;"
 			log.WithFields(log.Fields{"path": path, "name": name, "err": err.Error()}).Warningln("Open File failed!")
@@ -47,7 +47,7 @@ func WriteContentByPath(path, name, content string) (err error) {
 		}
 
 		// create file
-		fd, err = os.OpenFile(path+name, os.O_CREATE, 0666)
+		fd, err = os.OpenFile(path+name, os.O_CREATE|os.O_WRONLY, 0666)
 		if err != nil {
 			errmsg := "arapgp.pkg.sfs.GetContentByPath => OpenFile: file created failed;"
 			log.WithFields(log.Fields{"path": path, "name": name, "err": err.Error()}).Warningln("Create File failed!")

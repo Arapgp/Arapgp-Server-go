@@ -14,6 +14,5 @@ services:
     ports:
     - '27017:27017'
     volumes:
-    - .:/script/setup
-    command: --auth
+    - "./script/setup:/setup"
     restart: always

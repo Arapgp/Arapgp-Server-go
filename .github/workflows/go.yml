@@ -2,7 +2,7 @@ name: Go
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, ci ]
   pull_request:
     branches: [ main ]
 
@@ -26,10 +26,12 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.3.0
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
+    - name: Start Docker for MongoDB
+      run: |
+        docker run -d --name arapgpdb -p 27017:27017 -v "./script/setup:/setup" mongo
+        docker exec arapgpdb bash -c "mongo ljgtest /setup/mongodb-setup.js"
 
     - name: Test code
-      run: go test -v -run Test_ ./pkg/test
+      run: |
+        go test -v -run Test_ ./pkg/test
+        go test -v -run Test_ ./test

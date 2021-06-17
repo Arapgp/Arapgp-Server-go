@@ -38,8 +38,8 @@ type UserProfile struct {
 // InsertUsers is to insert multi-users
 func InsertUsers(users []User) (err error) {
 	// get collection
-	databaseName := config.DBcfg[pgpFileConnName].Database
-	userCollection := tool.GetClient(pgpFileConnName).Database(databaseName).Collection(userCollectionName)
+	databaseName := config.DBcfg[userConnName].Database
+	userCollection := tool.GetClient(userConnName).Database(databaseName).Collection(userCollectionName)
 
 	// generate context
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -92,8 +92,8 @@ func GetUsers(users []User, filter interface{}) (err error) {
 // UpdateUsers will update all Users that get through filter
 func UpdateUsers(update bson.M, filter bson.M) (err error) {
 	// get collection
-	databaseName := config.DBcfg[pgpFileConnName].Database
-	userCollection := tool.GetClient(pgpFileConnName).Database(databaseName).Collection(userCollectionName)
+	databaseName := config.DBcfg[userConnName].Database
+	userCollection := tool.GetClient(userConnName).Database(databaseName).Collection(userCollectionName)
 
 	// generate context
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -113,8 +113,8 @@ func UpdateUsers(update bson.M, filter bson.M) (err error) {
 // DeleteUsers will delete all Users that get through filter
 func DeleteUsers(filter bson.D) (err error) {
 	// get collection
-	databaseName := config.DBcfg[pgpFileConnName].Database
-	userCollection := tool.GetClient(pgpFileConnName).Database(databaseName).Collection(userCollectionName)
+	databaseName := config.DBcfg[userConnName].Database
+	userCollection := tool.GetClient(userConnName).Database(databaseName).Collection(userCollectionName)
 
 	// generate context
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)

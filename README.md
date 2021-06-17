@@ -49,8 +49,8 @@ sudo docker-compose --version
 
 ```bash
 # at repo root to build
-docker-compose build
-docker-compose up -d
+sudo chmod +x ./script/build/docker-init.sh
+./script/build/docker-init.sh
 ```
 
 ### 2. 直接 go run

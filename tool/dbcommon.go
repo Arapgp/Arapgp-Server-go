@@ -19,11 +19,10 @@ import (
 func GetClient(ConnName string) *mongo.Client {
 	// compose mongodb uri
 	connCfg := config.DBcfg[ConnName]
-	// sorry. I use root user to curd database, forgive me!
 	uri := fmt.Sprintf(
-		"mongodb://%s:%s@%s:%d",
+		"mongodb://%s:%s@%s:%d/%s",
 		connCfg.Username, connCfg.Password,
-		connCfg.Host, connCfg.Port,
+		connCfg.Host, connCfg.Port, connCfg.Database,
 	)
 
 	// init client options & get client

@@ -28,7 +28,7 @@ jobs:
 
     - name: Start Docker for MongoDB
       run: |
-        docker run -d --name arapgpdb -p 27017:27017 -v "./script/setup:/setup" mongo
+        docker run -d --name arapgpdb -p 27017:27017 -v /script/setup:/setup mongo
         docker exec arapgpdb bash -c "mongo ljgtest /setup/mongodb-setup.js"
 
     - name: Test code

@@ -32,6 +32,9 @@ func InitRouter() (r *gin.Engine) {
 		apiv1.GET("/user/:username/file", v1.GetFileByUserName)
 		apiv1.DELETE("/user/:username/file", v1.DeleteFileByUserName)
 		apiv1.GET("/user/:username/filesinfo", v1.GetFilesInfoByUserName)
+
+		// About Test
+		apiv1.GET("/ping", v1.Ping)
 	}
 
 	return

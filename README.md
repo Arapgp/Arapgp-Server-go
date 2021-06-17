@@ -119,4 +119,4 @@ go run arapgp.go
 * [x] `POST     /api/v1/user/:username/file`
 * [x] `PUT      /api/v1/user/:username/file`
 * [x] `DELETE   /api/v1/user/:username/file`
-* [ ] `GET      /api/v1/ping`
+* [x] `GET      /api/v1/ping`

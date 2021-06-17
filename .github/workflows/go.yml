@@ -26,13 +26,6 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
-    - name: Start Docker for MongoDB
-      run: |
-        docker run -d --name arapgpdb -p 27017:27017 -v $(pwd)/script/setup:/setup mongo
-        sleep 1
-        docker exec arapgpdb bash -c "mongo ljgtest /setup/mongodb-setup.js"
-
     - name: Test code
       run: |
         go test -v -run Test_ ./pkg/test
-        go test -v -run Test_ ./test

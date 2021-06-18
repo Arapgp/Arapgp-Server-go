@@ -10,7 +10,10 @@ import (
 func InitRouter() (r *gin.Engine) {
 	r = gin.New()
 
+	// use CORS wrapper first
+	// then add api router in the following lines
 	r.Use(CORS())
+
 	// corresponding to those /api/v1 in docs
 	apiv1 := r.Group("/api/v1")
 	if apiv1 != nil {

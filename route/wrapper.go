@@ -47,3 +47,19 @@ func Auth(inner gin.HandlerFunc) (outer gin.HandlerFunc) {
 		return
 	}
 }
+
+// CORS is a wrapper to add header
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type")
+		c.Header("Access-Control-Allow-Credentials", "false")
+		c.Set("Content-Type", "application/json")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		c.Next()
+	}
+}

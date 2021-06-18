@@ -10,6 +10,5 @@ import (
 func main() {
 	config.Setup("./arapgp.server.json")
 	router := route.InitRouter()
-
 	router.Run(":" + strconv.Itoa(config.Svccfg.Port))
 }

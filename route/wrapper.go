@@ -47,3 +47,14 @@ func Auth(inner gin.HandlerFunc) (outer gin.HandlerFunc) {
 		return
 	}
 }
+
+// HeaderWrapper is a wrapper to add header
+func HeaderWrapper(inner gin.HandlerFunc) (outer gin.HandlerFunc) {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+
+		// execute inner function
+		inner(c)
+		return
+	}
+}

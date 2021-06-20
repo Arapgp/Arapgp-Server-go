@@ -14,5 +14,6 @@ services:
     ports:
     - '27017:27017'
     volumes:
-    - "./script/setup:/setup"
+    - "./script/setup:/docker-entrypoint-initdb.d"
     restart: always
+

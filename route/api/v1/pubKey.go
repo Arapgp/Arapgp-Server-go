@@ -32,16 +32,14 @@ func PostPutPubKey(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad post request!"})
 		return
 	}
-
-	// needn't process error, because auth has done these job
-	session, _ := c.Cookie("SeesionId")
+	username := json.UserName
 
 	// update PubKey
 	err := model.UpdateUsers(
 		bson.M{"$set": bson.M{
 			"pubkey": json.PubKey,
 		}},
-		bson.M{"session": session},
+		bson.M{"profile.name": username},
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": "Unexpected error!"})
@@ -76,5 +74,6 @@ func DeletePubKey(c *gin.Context) {
 
 // JSONPubKey is used in "/api/v1/pubKey POST, PUT"
 type JSONPubKey struct {
-	PubKey string `json:"pubKey" binding:"required"`
+	PubKey   string `json:"pubKey" binding:"required"`
+	UserName string `json:"username" binding:"required"`
 }
